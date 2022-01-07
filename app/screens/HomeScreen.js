@@ -11,15 +11,11 @@ import styles from '../styles';
 export default HomeScreen = () => {
 	const Login = ({ navigation }) => {
 		useEffect(() => { if(user) navigation.replace('Recommend'); });
-		const login = async (email, password) => {
-			const params = {
-				email: email,
-				password: password
-			};
-			const result = await request('sign_in', 'post', params);
-			if('error' in result) Alert.alert('登入失敗!', result['error']);
+		const login = async user => {
+			const result = await request('sign_in', 'post', user);
+			if(result.error) Alert.alert('登入失敗!', result.error);
 			else {
-				setUser(params);
+				setUser(user);
 				navigation.replace('Recommend');
 			};
 		}
@@ -32,7 +28,7 @@ export default HomeScreen = () => {
 				<Input text={'密碼 :'} setText={setPassword} secureTextEntry={true} />
 				<View style={styles.buttonGroup}>
 					<MaterialIcons.Button name='add-circle-outline' size={styles.buttonIconSize} onPress={() => navigation.navigate('Register')}>註冊</MaterialIcons.Button>
-					<MaterialCommunityIcons.Button name='login' size={styles.buttonIconSize} onPress={() => login(email, password)}>登入</MaterialCommunityIcons.Button>
+					<MaterialCommunityIcons.Button name='login' size={styles.buttonIconSize} onPress={() => login({ email, password })}>登入</MaterialCommunityIcons.Button>
 				</View>
 			</View>
 		);

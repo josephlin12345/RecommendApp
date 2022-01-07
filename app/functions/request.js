@@ -9,5 +9,5 @@ export default request = async (endpoint, method, params) => {
       params: params
     });
     return res.data;
-  } catch(e) { return { 'error': e } }
+  } catch(e) { return { error: e } }
 }
