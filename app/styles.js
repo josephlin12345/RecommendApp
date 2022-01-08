@@ -1,14 +1,15 @@
 import { StyleSheet } from 'react-native';
 
 export default styles = StyleSheet.create({
+	contentWidth: {
+		width: '70%'
+	},
 	center: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center'
+		paddingVertical: '10%',
+		alignItems: 'center'
 	},
 	buttonGroup: {
-		width: '70%',
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     justifyContent: 'space-between',
   },
 	buttonIconSize: 30

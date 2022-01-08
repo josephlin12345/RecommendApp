@@ -1,37 +1,27 @@
 import { useContext } from 'react';
-import { StyleSheet, Text, TextInput } from 'react-native';
+import { Text, TextInput } from 'react-native';
 import { ThemeContext } from './Provider';
 
-export default Input = ({ text, setText, secureTextEntry }) => {
+export default Input = ({ text, setText, secureTextEntry, textContentType }) => {
   const theme = useContext(ThemeContext);
 
   return (
     <>
-      <Text style={{ color: theme.colors.text, ...styles.text }}>{text}</Text>
+      <Text style={{ color: theme.colors.text, fontSize: 25 }}>{text}</Text>
       <TextInput
         style={{
           color: theme.colors.primary,
           borderColor: theme.colors.text,
-          ...styles.textInput
+          height: 50,
+          fontSize: 25,
+          borderBottomWidth: 1,
+          marginVertical: 30
         }}
         onChangeText={text => setText(text)}
         autoCapitalize={'none'}
         secureTextEntry={secureTextEntry}
+        textContentType={textContentType}
       ></TextInput>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  text: {
-		fontSize: 25,
-		width: '70%'
-	},
-	textInput: {
-		width: '70%',
-		height: 50,
-		fontSize: 25,
-		borderBottomWidth: 1,
-		margin: 30
-	}
-});
