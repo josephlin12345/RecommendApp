@@ -30,19 +30,23 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const LocationUpdateTaskName = 'LocationUpdate';
   TaskManager.defineTask(LocationUpdateTaskName, async ({ data: { locations: [location] }, error }) => {
-    if(!error) {
+    if(!error)
       try {
         const [address] = await Location.reverseGeocodeAsync(location.coords);
-        if(address.name && user) await request('history', 'post', { ...user, title: address.name });
+        if(address.name && isNaN(address.name) && user) await request('history', 'post', { ...user, title: address.name });
       } catch {}
-    }
   });
   useEffect(async () => {
     const user = await getLocalUser();
     setUser(user);
     await Location.requestForegroundPermissionsAsync();
     await Location.requestBackgroundPermissionsAsync();
-    await Location.startLocationUpdatesAsync(LocationUpdateTaskName);
+    await Location.startLocationUpdatesAsync(LocationUpdateTaskName, {
+      foregroundService: {
+        notificationTitle: 'Recommend',
+        notificationBody: 'running in background'
+      }
+    });
   }, []);
 
   return (
