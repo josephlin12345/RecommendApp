@@ -6,7 +6,7 @@ import { ThemeContext, UserContext } from '../components/Provider';
 import request from '../functions/request';
 import styles from '../styles';
 
-export default ProfileScreen = () => {
+const ProfileScreen = () => {
   const Profile = ({ navigation }) => {
     return (
       <ScrollView contentContainerStyle={styles.center}>
@@ -66,3 +66,5 @@ const profileStyles = StyleSheet.create({
     fontSize: 20
   }
 });
+
+export default ProfileScreen;

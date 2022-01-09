@@ -9,7 +9,7 @@ import { SetUserContext, UserContext } from '../components/Provider';
 import request from '../functions/request';
 import styles from '../styles';
 
-export default HomeScreen = () => {
+const HomeScreen = () => {
 	const Login = ({ navigation }) => {
 		const login = async user => {
 			const response = await request('sign_in', 'post', user);
@@ -92,3 +92,5 @@ export default HomeScreen = () => {
 		</Stack.Navigator>
 	);
 }
+
+export default HomeScreen;

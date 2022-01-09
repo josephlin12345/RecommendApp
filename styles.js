@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export default styles = StyleSheet.create({
+const styles = StyleSheet.create({
 	contentWidth: {
 		width: '70%'
 	},
@@ -14,3 +14,5 @@ export default styles = StyleSheet.create({
   },
 	buttonIconSize: 30
 });
+
+export default styles;

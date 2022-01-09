@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default request = async (endpoint, method, params) => {
+const request = async (endpoint, method, params) => {
   const api_base_url = 'https://recommendation--system.herokuapp.com/api/';
   try {
     const res =  await axios({
@@ -11,3 +11,5 @@ export default request = async (endpoint, method, params) => {
     return res.data;
   } catch(e) { return { error: e } }
 }
+
+export default request;

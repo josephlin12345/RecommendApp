@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Text, TextInput } from 'react-native';
 import { ThemeContext } from './Provider';
 
-export default Input = ({ text, setText, secureTextEntry, textContentType }) => {
+const Input = ({ text, setText, secureTextEntry, textContentType }) => {
   const theme = useContext(ThemeContext);
 
   return (
@@ -25,3 +25,5 @@ export default Input = ({ text, setText, secureTextEntry, textContentType }) => 
     </>
   );
 }
+
+export default Input;
