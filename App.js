@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import React, { useEffect } from 'react';
+import { Alert } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getLocalUser, Provider } from './components/Provider';
@@ -17,8 +18,8 @@ TaskManager.defineTask(LocationUpdateTaskName, async ({ data: { locations: [loca
     const user = await getLocalUser();
     try {
       const [address] = await Location.reverseGeocodeAsync(location.coords);
-      console.log(location.coords, address);
       if(isNaN(address.name) && user) request('history', 'post', { ...user, title: address.name });
+      try { Alert.alert('location', `${JSON.stringify(address, null, 2)}`); } catch {}
     } catch(e) { console.log(e); }
   }
 });
