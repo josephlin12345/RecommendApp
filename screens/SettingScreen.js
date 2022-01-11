@@ -6,6 +6,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { SetUserContext, ThemeContext, ToggleThemeContext, UserContext } from '../components/Provider';
 import styles from '../styles';
 
+// to do
 const SettingScreen = () => {
   const Setting = () => {
     return (
