@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 
 export const UserContext = React.createContext();
@@ -14,7 +15,7 @@ export const UserProvider = ({ children }) => {
   const setLocalUser = new_user => {
     setUser(new_user);
     const user = JSON.stringify(new_user);
-    AsyncStorage.setItem('user', user, () => {});
+    try { AsyncStorage.setItem('user', user); } catch {}
   }
 
   const [user, setUser] = useState(null);
@@ -41,7 +42,7 @@ export const ThemeProvider = ({ children }) => {
   const setLocalTheme = new_theme => {
     setTheme(new_theme);
     const theme = JSON.stringify(new_theme);
-    AsyncStorage.setItem('theme', theme, () => {});
+    try { AsyncStorage.setItem('theme', theme); } catch {}
   }
 
   const toggleTheme = () => setLocalTheme(theme.dark ? DefaultTheme : DarkTheme);
@@ -53,6 +54,7 @@ export const ThemeProvider = ({ children }) => {
     <ThemeContext.Provider value={theme}>
       <ToggleThemeContext.Provider value={toggleTheme}>
         <NavigationContainer theme={theme}>
+          <StatusBar style={theme.dark ? 'light' : 'dark'} />
           {children}
         </NavigationContainer>
       </ToggleThemeContext.Provider>

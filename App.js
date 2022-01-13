@@ -1,46 +1,37 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import React, { useEffect } from 'react';
-import { Alert } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getLocalUser, Provider } from './components/Provider';
-import request from './functions/request';
+import { BACKGROUND_FETCH_TASK_NAME, LOCATION_UPDATE_TASK_NAME } from './constant';
+import { sendLocation } from './functions/location';
+import { startScheduleNotification, updateNotification } from './functions/notification';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SettingScreen from './screens/SettingScreen';
 
-const LocationUpdateTaskName = 'LocationUpdate';
-// TaskManager: Task "LocationUpdate" failed:, [Error: Geocoder is not running.]
-TaskManager.defineTask(LocationUpdateTaskName, async ({ data: { locations: [location] }, error }) => {
+TaskManager.defineTask(LOCATION_UPDATE_TASK_NAME, async ({ data: { locations: [location] }, error }) => {
   if(!error) {
     const user = await getLocalUser();
-    try {
-      const [address] = await Location.reverseGeocodeAsync(location.coords);
-      if(isNaN(address.name) && user) request('history', 'post', { ...user, title: address.name });
-      try { Alert.alert('location', `${JSON.stringify(address, null, 2)}`); } catch {}
-    } catch(e) { console.log(e); }
+    if(user) sendLocation(user, location);
   }
+});
+TaskManager.defineTask(BACKGROUND_FETCH_TASK_NAME, async () => {
+  const user = await getLocalUser();
+  if(user) updateNotification(user);
 });
 
 const App = () => {
   const Tab = createBottomTabNavigator();
   useEffect(async () => {
-    const foregroundPermissions = await Location.requestForegroundPermissionsAsync();
-    const backgroundPermissions = await Location.requestBackgroundPermissionsAsync();
-    if(foregroundPermissions.granted && backgroundPermissions.granted)
-      Location.startLocationUpdatesAsync(LocationUpdateTaskName, {
-        foregroundService: {
-          notificationTitle: 'Recommend',
-          notificationBody: 'tracking location in background'
-        }
-      });
+    const user = await getLocalUser();
+    if(user) startScheduleNotification(user);
   }, []);
 
   return (
     <Provider>
-      <Tab.Navigator initialRouteName='Home' screenOptions={{headerShown: false}}>
+      <Tab.Navigator initialRouteName='首頁' screenOptions={{headerShown: false}}>
         <Tab.Screen name='首頁' component={HomeScreen} options={{
           tabBarIcon: ({color, size}) => <Ionicons name='home-outline' size={size} color={color}/>
         }} />
