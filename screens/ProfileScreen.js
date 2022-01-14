@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { useContext, useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, Text, View } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { ThemeContext, UserContext } from '../components/Provider';
 import request from '../functions/request';
@@ -42,8 +42,9 @@ const ProfileScreen = () => {
   }
 
   const refreshProfile = async user => {
-    const profile = (await request('profile', 'get', user)).result;
-    setProfile(profile);
+    const response = await request('profile', 'get', user);
+    if(response.error) Alert.alert('取得個人資料失敗!', response.error);
+    else setProfile(response.result);
   }
 
   const Stack = createStackNavigator();

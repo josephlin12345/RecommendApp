@@ -16,7 +16,7 @@ export const startLocationUpdate = async () => {
 
 // run reverseGeocodeAsync in background
 // TaskManager: Task "LocationUpdate" failed:, [Error: Geocoder is not running.]
-export const sendLocation = async (user, location) => {
+export const sendLocation = async (location, user) => {
 	try {
 		const [address] = await Location.reverseGeocodeAsync(location.coords);
 		if(isNaN(address.name)) request('history', 'post', { ...user, title: address.name });

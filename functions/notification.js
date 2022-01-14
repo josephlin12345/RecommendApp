@@ -1,6 +1,7 @@
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
+import { Linking } from 'react-native';
 import { BACKGROUND_FETCH_TASK_NAME } from '../constant';
 import request from './request';
 
@@ -10,7 +11,7 @@ export const startScheduleNotification = async user => {
     Notifications.setNotificationHandler({
       handleNotification: () => ({
         shouldShowAlert: true,
-        shouldPlaySound: true,
+        shouldPlaySound: false,
         shouldSetBadge: false
       })
     });
@@ -21,25 +22,36 @@ export const startScheduleNotification = async user => {
   }
 }
 
-// to do
+export const handleNotificationResponse = (content, user) => {
+  request('history', 'post', { ...user, title: content.title });
+  Linking.openURL(content.data.url);
+}
+
 export const updateNotification = async user => {
   const response = await request('recommend', 'get', {
     ...user,
     offset: 0,
-    limit: 10
+    limit: 14
   });
   if(!response.error) {
     await Notifications.cancelAllScheduledNotificationsAsync();
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'test',
-        body: 'test'
-      },
-      trigger: {
-        seconds: 3,
-        repeats: true
-      }
-    });
+    for(const item of response.result) {
+      const index = response.result.indexOf(item);
+      const content = item.event.content;
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: content.organizer,
+          body: content.title,
+          data: { url: content.url }
+        },
+        trigger: {
+          weekday: index % 7 + 1,
+          hour: index % 2 * 12,
+          minute: 0,
+          repeats: true
+        }
+      });
+    }
   }
 }
 

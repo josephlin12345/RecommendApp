@@ -3,7 +3,6 @@ import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import { useContext, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SetUserContext, ThemeContext, ToggleThemeContext, UserContext } from '../components/Provider';
 import { LOCATION_UPDATE_TASK_NAME } from '../constant';
@@ -71,7 +70,7 @@ const SettingScreen = ({ navigation }) => {
                 />
               </View>
             )}
-            <MaterialCommunityIcons.Button name='logout' size={styles.buttonIconSize} onPress={logout}>登出</MaterialCommunityIcons.Button>
+            {user && <MaterialCommunityIcons.Button name='logout' size={styles.buttonIconSize} onPress={logout}>登出</MaterialCommunityIcons.Button>}
           </View>
         </View>
       </ScrollView>
