@@ -14,10 +14,10 @@ export const startScheduleNotification = async user => {
         shouldSetBadge: false
       })
     });
-    updateNotification(user);
+    await updateNotification(user);
     const backGroundFetchStatus = await BackgroundFetch.getStatusAsync();
     if(backGroundFetchStatus == BackgroundFetch.BackgroundFetchStatus.Available)
-      BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK_NAME, { minimumInterval: 60 * 60 });
+      await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK_NAME, { minimumInterval: 60 * 60 });
   }
 }
 
@@ -30,21 +30,21 @@ export const updateNotification = async user => {
   });
   if(!response.error) {
     await Notifications.cancelAllScheduledNotificationsAsync();
-    Notifications.scheduleNotificationAsync({
+    await Notifications.scheduleNotificationAsync({
       content: {
         title: 'test',
         body: 'test'
       },
       trigger: {
         seconds: 3,
-        // repeats: true
+        repeats: true
       }
     });
   }
 }
 
 export const stopScheduleNotification = async () => {
-  Notifications.cancelAllScheduledNotificationsAsync();
+  await Notifications.cancelAllScheduledNotificationsAsync();
   if(await TaskManager.isTaskRegisteredAsync(BACKGROUND_FETCH_TASK_NAME))
-    BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK_NAME);
+    await BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK_NAME);
 }

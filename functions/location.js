@@ -6,7 +6,7 @@ export const startLocationUpdate = async () => {
 	const LocationForegroundPermissions = await Location.requestForegroundPermissionsAsync();
 	const locationBackgroundPermissions = await Location.requestBackgroundPermissionsAsync();
 	if(LocationForegroundPermissions.granted && locationBackgroundPermissions.granted)
-		Location.startLocationUpdatesAsync(LOCATION_UPDATE_TASK_NAME, {
+		await Location.startLocationUpdatesAsync(LOCATION_UPDATE_TASK_NAME, {
 			foregroundService: {
 				notificationTitle: 'Recommend',
 				notificationBody: '追蹤位置中...'
@@ -25,5 +25,5 @@ export const sendLocation = async (user, location) => {
 
 export const stopLocationUpdate = async () => {
 	if(await Location.hasStartedLocationUpdatesAsync(LOCATION_UPDATE_TASK_NAME))
-		Location.stopLocationUpdatesAsync(LOCATION_UPDATE_TASK_NAME);
+		await Location.stopLocationUpdatesAsync(LOCATION_UPDATE_TASK_NAME);
 };

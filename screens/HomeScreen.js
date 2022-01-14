@@ -17,9 +17,9 @@ const HomeScreen = () => {
 			const response = await request('sign_in', 'post', user);
 			if(response.error) Alert.alert('登入失敗!', response.error);
 			else {
+				await startLocationUpdate();
+				await startScheduleNotification(user);
 				setUser(user);
-				startLocationUpdate();
-				startScheduleNotification(user);
 				stackNavigation.replace('首頁 ');
 			};
 		}
