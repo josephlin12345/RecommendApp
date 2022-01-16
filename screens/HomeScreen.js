@@ -13,6 +13,8 @@ import styles from '../styles';
 
 const HomeScreen = () => {
 	const Login = ({ navigation: stackNavigation }) => {
+		useEffect(() => { if(user) stackNavigation.replace('首頁 '); });
+
 		const login = async user => {
 			const response = await request('sign_in', 'post', user);
 			if(response.error) Alert.alert('登入失敗!', response.error);
@@ -26,14 +28,13 @@ const HomeScreen = () => {
 
 		const [email, setEmail] = useState('');
 		const [password, setPassword] = useState('');
-		useEffect(() => { if(user) stackNavigation.replace('首頁 '); });
 
 		return (
 			<ScrollView contentContainerStyle={styles.scrollView} keyboardShouldPersistTaps='handled'>
-				<View style={styles.containerWidth}>
-					<Input text={'信箱 :'} setText={setEmail} secureTextEntry={false} textContentType='emailAddress' />
-					<Input text={'密碼 :'} setText={setPassword} secureTextEntry={true} textContentType='password' />
-					<View style={styles.verticalButtonGroup}>
+				<View style={styles.container}>
+					<Input label={'信箱 :'} value={email} setText={setEmail} secureTextEntry={false} />
+					<Input label={'密碼 :'} value={password} setText={setPassword} secureTextEntry={true} />
+					<View style={styles.horizontalGroup}>
 						<MaterialCommunityIcons.Button name='login' size={styles.buttonIconSize} onPress={() => login({ email, password })}>登入</MaterialCommunityIcons.Button>
 						<MaterialIcons.Button name='add-circle-outline' size={styles.buttonIconSize} onPress={() => stackNavigation.navigate('註冊')}>註冊</MaterialIcons.Button>
 					</View>
@@ -43,30 +44,35 @@ const HomeScreen = () => {
 	}
 
 	const Register = ({ navigation: stackNavigation }) => {
-		const register = async user => {
-			if(user.password != user.confirmPassword) {
+		const register = async newUser => {
+			if(newUser.password != newUser.confirmPassword) {
 				Alert.alert('註冊失敗!', '密碼需與確認密碼一致!');
 				return
 			}
-			const result = await request('sign_up', 'post', user);
+			const result = await request('sign_up', 'post', {
+				email: newUser.email,
+				password: newUser.password
+			});
 			if(result.error) Alert.alert('註冊失敗!', result.error);
 			else {
 				Alert.alert('註冊成功!');
 				stackNavigation.goBack();
 			};
 		}
+
 		const [email, setEmail] = useState('');
 		const [password, setPassword] = useState('');
 		const [confirmPassword, setConfirmPassword] = useState('');
+		const newUser = { email, password, confirmPassword };
 
 		return (
 			<ScrollView contentContainerStyle={styles.scrollView} keyboardShouldPersistTaps='handled'>
-				<View style={styles.containerWidth}>
-					<Input text={'信箱 :'} setText={setEmail} secureTextEntry={false} textContentType='emailAddress' />
-					<Input text={'密碼 :'} setText={setPassword} secureTextEntry={true} textContentType='password' />
-					<Input text={'確認密碼 :'} setText={setConfirmPassword} secureTextEntry={true} textContentType='password' />
-					<View style={styles.verticalButtonGroup}>
-						<Ionicons.Button name='send' size={styles.buttonIconSize} onPress={() => register({ email, password, confirmPassword })}>確認</Ionicons.Button>
+				<View style={styles.container}>
+					<Input label={'信箱 :'} value={email} setText={setEmail} secureTextEntry={false} />
+					<Input label={'密碼 :'} value={password} setText={setPassword} secureTextEntry={true} />
+					<Input label={'確認密碼 :'} value={confirmPassword} setText={setConfirmPassword} secureTextEntry={true} />
+					<View style={styles.horizontalGroup}>
+						<Ionicons.Button name='send' size={styles.buttonIconSize} onPress={() => register(newUser)}>確認</Ionicons.Button>
 					</View>
 				</View>
 			</ScrollView>
@@ -76,9 +82,10 @@ const HomeScreen = () => {
 	// to do
 	const Home = ({ navigation: stackNavigation }) => {
 		useEffect(() => { if(!user) stackNavigation.replace('登入'); });
+
 		return (
 			<ScrollView contentContainerStyle={styles.scrollView}>
-				<View style={styles.containerWidth}>
+				<View style={styles.container}>
 				</View>
 			</ScrollView>
 		);

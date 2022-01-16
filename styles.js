@@ -1,20 +1,21 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-	containerWidth: {
-		width: '70%'
+	container: {
+		width: '70%',
+		justifyContent: 'space-between'
 	},
 	scrollView: {
 		paddingVertical: '10%',
 		alignItems: 'center'
 	},
-	verticalButtonGroup: {
+	horizontalGroup: {
     flexDirection: 'row-reverse',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+		marginVertical: 30
   },
 	text: {
-    paddingVertical: 5,
-    fontSize: 20
+		fontSize: 25
 	},
 	buttonIconSize: 30
 });

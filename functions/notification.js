@@ -2,7 +2,7 @@ import * as BackgroundFetch from 'expo-background-fetch';
 import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
 import { Linking } from 'react-native';
-import { BACKGROUND_FETCH_TASK_NAME } from '../constant';
+import { BACKGROUND_FETCH_TASK_NAME, NOTIFICATIONS_PER_DAY } from '../constant';
 import request from './request';
 
 export const startScheduleNotification = async user => {
@@ -31,7 +31,7 @@ export const updateNotification = async user => {
   const response = await request('recommend', 'get', {
     ...user,
     offset: 0,
-    limit: 14
+    limit: NOTIFICATIONS_PER_DAY * 7
   });
   if(!response.error) {
     await Notifications.cancelAllScheduledNotificationsAsync();
@@ -46,7 +46,7 @@ export const updateNotification = async user => {
         },
         trigger: {
           weekday: index % 7 + 1,
-          hour: index % 2 * 12,
+          hour: index % NOTIFICATIONS_PER_DAY * (24 / NOTIFICATIONS_PER_DAY),
           minute: 0,
           repeats: true
         }

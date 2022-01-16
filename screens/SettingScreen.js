@@ -57,21 +57,22 @@ const SettingScreen = ({ navigation }) => {
 
     return (
       <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={styles.containerWidth}>
-          <View style={settingStyles.innerContainer}>
-            {switches.map(item =>
-              <View key={item.label} style={settingStyles.switchContainer}>
-                <Text style={{ color: theme.colors.text, ...settingStyles.switchLabel, ...styles.text }}>{item.label}</Text>
-                <Switch
-                  style={settingStyles.switch}
-                  trackColor={{ false: theme.colors.primary, true: theme.colors.primary }}
-                  onValueChange={item.onValueChange}
-                  value={item.value}
-                />
-              </View>
-            )}
-            {user && <MaterialCommunityIcons.Button name='logout' size={styles.buttonIconSize} onPress={logout}>登出</MaterialCommunityIcons.Button>}
-          </View>
+        <View style={[styles.container, settingStyles.container]}>
+          {switches.map(item =>
+            <View key={item.label} style={settingStyles.switchContainer}>
+              <Text style={[styles.text, { color: theme.colors.text }]}>{item.label}</Text>
+              <Switch
+                trackColor={{ false: theme.colors.primary, true: theme.colors.primary }}
+                onValueChange={item.onValueChange}
+                value={item.value}
+              />
+            </View>
+          )}
+          {user &&
+            <View style={styles.horizontalGroup}>
+              <MaterialCommunityIcons.Button name='logout' size={styles.buttonIconSize} onPress={logout}>登出</MaterialCommunityIcons.Button>
+            </View>
+          }
         </View>
       </ScrollView>
     );
@@ -91,19 +92,13 @@ const SettingScreen = ({ navigation }) => {
 }
 
 const settingStyles = StyleSheet.create({
-  innerContainer: {
-    width: '30%',
-    height: 300,
-    justifyContent: 'space-between'
+  container: {
+    height: 400
   },
   switchContainer: {
-    flexDirection: 'row'
-  },
-  switchLabel: {
-    alignSelf: 'center'
-  },
-  switch: {
-    paddingRight: 20
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center'
   }
 });
 
