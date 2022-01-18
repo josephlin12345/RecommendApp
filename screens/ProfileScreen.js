@@ -47,14 +47,14 @@ const ProfileScreen = () => {
     useEffect(() => { if(!user) stackNavigation.goBack(); });
 
     const editProfile = async (user, newProfile) => {
-			const result = await request('profile', 'patch', {
+			const response = await request('profile', 'patch', {
         email: user.email,
         password: user.password,
         name: newProfile.name,
         birthday: dateToLocalString(newProfile.birthday),
         gender: newProfile.gender
       });
-			if(result.error) Alert.alert('編輯失敗!', result.error);
+			if(response.error) Alert.alert('編輯失敗!', response.error);
 			else {
 				Alert.alert('編輯成功!');
         await refreshProfile(user);
@@ -115,12 +115,12 @@ const ProfileScreen = () => {
 				Alert.alert('變更失敗!', '新密碼需與確認新密碼一致!');
 				return
 			}
-			const result = await request('password', 'patch', {
+			const response = await request('password', 'patch', {
         email: user.email,
         password: user.password,
         new_password: password.newPassword
       });
-			if(result.error) Alert.alert('變更失敗!', result.error);
+			if(response.error) Alert.alert('變更失敗!', response.error);
 			else {
         setUser({ email: user.email, password: password.newPassword });
 				Alert.alert('變更成功!');
