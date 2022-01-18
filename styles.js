@@ -2,17 +2,16 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
 	container: {
-		width: '70%',
-		justifyContent: 'space-between'
-	},
-	scrollView: {
 		paddingVertical: '10%',
 		alignItems: 'center'
 	},
+	innerContainer: {
+		minWidth: '70%',
+		maxWidth: '70%'
+	},
 	horizontalGroup: {
     flexDirection: 'row-reverse',
-    justifyContent: 'space-between',
-		marginVertical: 30
+    justifyContent: 'space-between'
   },
 	text: {
 		fontSize: 25

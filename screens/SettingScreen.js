@@ -56,8 +56,8 @@ const SettingScreen = ({ navigation }) => {
     }, [user]);
 
     return (
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={[styles.container, settingStyles.container]}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={[styles.innerContainer, settingStyles.setting]}>
           {switches.map(item =>
             <View key={item.label} style={settingStyles.switchContainer}>
               <Text style={[styles.text, { color: theme.colors.text }]}>{item.label}</Text>
@@ -92,8 +92,9 @@ const SettingScreen = ({ navigation }) => {
 }
 
 const settingStyles = StyleSheet.create({
-  container: {
-    height: 400
+  setting: {
+    height: 400,
+    justifyContent: 'space-between'
   },
   switchContainer: {
     flexDirection: 'row',

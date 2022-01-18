@@ -21,8 +21,8 @@ const ProfileScreen = () => {
     };
 
     return (
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={[styles.container, profileStyles.container]}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={[styles.innerContainer, profileStyles.profile]}>
           {user ? profile &&
             <>
               {Object.entries(translatedPorfile).map(([label, name]) =>
@@ -75,8 +75,8 @@ const ProfileScreen = () => {
     const newProfile = { name, birthday, gender };
 
     return (
-      <ScrollView contentContainerStyle={styles.scrollView} keyboardShouldPersistTaps='handled'>
-        <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps='handled'>
+        <View style={styles.innerContainer}>
           <Input label={'名稱 :'} value={name} setText={setName} secureTextEntry={false} />
           <Text style={[styles.text, { color: theme.colors.text }]}>生日:</Text>
           <View style={[styles.horizontalGroup, profileStyles.profileItem]}>
@@ -87,12 +87,12 @@ const ProfileScreen = () => {
           <Text style={[styles.text, { color: theme.colors.text }]}>性別:</Text>
           <View style={[styles.horizontalGroup, profileStyles.profileItem]}>
             {Object.entries(GENDERS).map(([label, name]) =>
-              <View key={label} style={[styles.horizontalGroup, profileStyles.profileItem]} onTouchStart={() => setGender(label)}>
+              <TouchableOpacity key={label} style={[styles.horizontalGroup, profileStyles.profileItem]} onPress={() => setGender(label)}>
                 <Text style={[styles.text, { color: theme.colors.text }]}>{name}</Text>
-                <TouchableOpacity style={[profileStyles.radioButton, { borderColor: theme.colors.text }]}>
+                <View style={[profileStyles.radioButton, { borderColor: theme.colors.text }]}>
                   {label == gender && <View style={[profileStyles.radioButtonSelected, { backgroundColor: theme.colors.text }]} />}
-                </TouchableOpacity>
-              </View>
+                </View>
+              </TouchableOpacity>
             )}
           </View>
           <View style={styles.horizontalGroup}>
@@ -134,8 +134,8 @@ const ProfileScreen = () => {
     const password = { oldPassword, newPassword, confirmNewPassword };
 
     return (
-      <ScrollView contentContainerStyle={styles.scrollView} keyboardShouldPersistTaps='handled'>
-        <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps='handled'>
+        <View style={styles.innerContainer}>
           <Input label={'舊密碼 :'} value={oldPassword} setText={setOldPassword} secureTextEntry={true} />
           <Input label={'新密碼 :'} value={newPassword} setText={setNewPassword} secureTextEntry={true} />
           <Input label={'確認新密碼 :'} value={confirmNewPassword} setText={setconfirmNewPassword} secureTextEntry={true} />
@@ -174,8 +174,9 @@ const ProfileScreen = () => {
 }
 
 const profileStyles = StyleSheet.create({
-  container: {
-    height: 500
+  profile: {
+    height: 500,
+    justifyContent: 'space-between'
   },
   profileItem: {
     alignItems: 'center'
