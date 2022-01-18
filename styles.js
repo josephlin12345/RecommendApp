@@ -6,8 +6,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	innerContainer: {
-		minWidth: '70%',
-		maxWidth: '70%'
+		width: '70%'
 	},
 	horizontalGroup: {
     flexDirection: 'row-reverse',

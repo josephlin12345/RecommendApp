@@ -8,9 +8,9 @@ const Input = ({ label, value, setText, secureTextEntry }) => {
 
   return (
     <>
-      <Text style={[styles.text, { color: theme.colors.text }]}>{label}</Text>
+      <Text style={[styles.text, { color: theme.colors.primary }]}>{label}</Text>
       <TextInput
-        style={[styles.text, inputStyles.textInput, { color: theme.colors.primary, borderColor: theme.colors.text }]}
+        style={[styles.text, inputStyles.textInput, { color: theme.colors.text, borderColor: theme.colors.text }]}
         value={value}
         onChangeText={text => setText(text)}
         autoCapitalize={'none'}

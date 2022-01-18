@@ -1,7 +1,6 @@
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
-import { Linking } from 'react-native';
 import { BACKGROUND_FETCH_TASK_NAME, NOTIFICATIONS_PER_DAY } from '../constant';
 import request from './request';
 
@@ -20,11 +19,6 @@ export const startScheduleNotification = async user => {
     if(backGroundFetchStatus == BackgroundFetch.BackgroundFetchStatus.Available)
       await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK_NAME, { minimumInterval: 60 * 60 });
   }
-}
-
-export const handleNotificationResponse = (content, user) => {
-  request('history', 'post', { ...user, title: content.title });
-  Linking.openURL(content.data.url);
 }
 
 export const updateNotification = async user => {

@@ -78,16 +78,14 @@ const HomeScreen = () => {
 		);
 	}
 
-	// to do
 	const Home = ({ navigation: stackNavigation }) => {
 		useEffect(() => { if(!user) stackNavigation.replace('登入'); });
 
 		const Event = ({ item: event }) => (
 			<TouchableHighlight
 				style={[
-					styles.innerContainer,
 					homeStyles.eventContainer,
-					homeStyles.shadow,
+					homeStyles.block,
 					{
 						borderColor: theme.colors.border,
 						backgroundColor: theme.colors.background,
@@ -99,14 +97,15 @@ const HomeScreen = () => {
 			>
 				<>
 					<Image style={homeStyles.eventImage} source={{ uri: event.content.image }} resizeMode='center' />
-					<Text style={[homeStyles.eventTitle, { color: theme.colors.text }]}>{event.content.title}</Text>
+					<Text style={{ color: theme.colors.text }}>{event.content.title}</Text>
 				</>
 			</TouchableHighlight>
 		);
 
 		const openModal = event => {
-			setSelectedEvent(event);
+			// request('history', 'post', { ...user, title: event.content.title });
 			setModalVisible(true);
+			setSelectedEvent(event);
 		}
 
 		const [selectedEvent, setSelectedEvent] = useState(null);
@@ -183,18 +182,27 @@ const HomeScreen = () => {
 				'createDate': '2021-12-30 21:59:29.967000'
 		}
 		];
+		const translatedEvent = selectedEvent && {
+			名稱: selectedEvent.content.title,
+			建立者: selectedEvent.content.organizer,
+			詳情: selectedEvent.content.detail
+		};
 
 		return (
 			<>
-				<FlatList contentContainerStyle={styles.container} data={events} renderItem={Event} keyExtractor={event => event._id} />
+				<FlatList contentContainerStyle={homeStyles.flatList} data={events} renderItem={Event} keyExtractor={event => event._id} numColumns={2} />
 				{selectedEvent &&
 					<Modal animationType='fade' transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
 						<View style={homeStyles.modalContainer}>
-							<View style={[homeStyles.modal, homeStyles.shadow, { borderColor: theme.colors.border, shadowColor: theme.colors.text }]}>
-								<ScrollView contentContainerStyle={homeStyles.modalContent} keyboardShouldPersistTaps='handled'>
+							<View style={[homeStyles.modal, homeStyles.block, { borderColor: theme.colors.border, shadowColor: theme.colors.text }]}>
+								<ScrollView contentContainerStyle={homeStyles.modalScrollView} keyboardShouldPersistTaps='handled'>
 									<Image style={homeStyles.eventImage} source={{ uri: selectedEvent.content.image }} resizeMode='center' />
-									{/* to do */}
-									<Text style={[homeStyles.eventTitle, { color: theme.colors.text }]}>{selectedEvent.content.title}</Text>
+									{Object.entries(translatedEvent).map(([label, value]) =>
+										<View key={label}>
+											<Text style={[homeStyles.modalLabel, { color: theme.colors.card }]}>{label} :</Text>
+											<Text style={{ color: theme.colors.text }}>{value}</Text>
+										</View>
+									)}
 								</ScrollView>
 								<View style={styles.horizontalGroup}>
 									<Ionicons.Button name='close-circle' size={styles.buttonIconSize} onPress={() => setModalVisible(false)}>關閉</Ionicons.Button>
@@ -223,19 +231,19 @@ const HomeScreen = () => {
 }
 
 const homeStyles = StyleSheet.create({
+	flatList: {
+		paddingVertical: '5%'
+	},
   eventContainer: {
-		borderWidth: 2,
-		borderRadius: 20,
-		marginBottom: 10,
-		padding: 5,
-		alignItems: 'center'
+		margin: 10,
+		alignItems: 'center',
+		width: '45%'
   },
 	eventImage: {
+		maxWidth: '100%',
 		width: 500,
-		height: 200
-	},
-	eventTitle: {
-		marginVertical: 10
+		height: 150,
+		marginBottom: 10
 	},
 	modalContainer: {
     flex: 1,
@@ -244,24 +252,27 @@ const homeStyles = StyleSheet.create({
   },
   modal: {
 		width: '90%',
-		height: 600,
-		borderWidth: 2,
-    borderRadius: 20,
-    padding: 20,
+		height: '80%',
 		backgroundColor: 'gray'
   },
-	modalContent: {
-		padding: 10,
-		alignItems: 'center'
+	modalScrollView: {
+		padding: 10
 	},
-	shadow: {
+	modalLabel: {
+		fontSize: 20,
+		paddingVertical: 5
+	},
+	block: {
     shadowOffset: {
       width: 0,
       height: 2
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
+		borderWidth: 2,
+    borderRadius: 20,
+    padding: 10
 	}
 });
 

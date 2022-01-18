@@ -2,12 +2,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
 import React, { useEffect } from 'react';
+import { Linking } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getLocalUser, Provider } from './components/Provider';
 import { BACKGROUND_FETCH_TASK_NAME, LOCATION_UPDATE_TASK_NAME } from './constant';
 import { sendLocation } from './functions/location';
-import { handleNotificationResponse, startScheduleNotification, updateNotification } from './functions/notification';
+import { startScheduleNotification, updateNotification } from './functions/notification';
+import request from './functions/request';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SettingScreen from './screens/SettingScreen';
@@ -27,13 +29,14 @@ const App = () => {
   const Tab = createBottomTabNavigator();
   useEffect(async () => {
     const user = await getLocalUser();
-    if(user) {
-      startScheduleNotification(user);
-      const subscription = Notifications.addNotificationResponseReceivedListener(
-        ({ notification: { request: { content } } }) => handleNotificationResponse(content, user)
-      );
-      return () => subscription.remove();
-    }
+    if(user) startScheduleNotification(user);
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      ({ notification: { request: { content } } }) => {
+        if(user) request('history', 'post', { ...user, title: content.body });
+        Linking.openURL(content.data.url);
+      }
+    );
+    return () => subscription.remove();
   }, []);
 
   return (

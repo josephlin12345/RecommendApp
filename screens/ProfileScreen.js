@@ -25,10 +25,10 @@ const ProfileScreen = () => {
         <View style={[styles.innerContainer, profileStyles.profile]}>
           {user ? profile &&
             <>
-              {Object.entries(translatedPorfile).map(([label, name]) =>
+              {Object.entries(translatedPorfile).map(([label, value]) =>
                 <View key={label}>
                   <Text style={[styles.text, { color: theme.colors.primary }]}>{label} :</Text>
-                  <Text style={[styles.text, { color: theme.colors.text }]}>{name}</Text>
+                  <Text style={[styles.text, { color: theme.colors.text }]}>{value}</Text>
                 </View>
               )}
               <View style={styles.horizontalGroup}>
@@ -36,7 +36,7 @@ const ProfileScreen = () => {
                 <FontAwesome5.Button name='edit' size={styles.buttonIconSize} onPress={() => stackNavigation.navigate('變更密碼')}>變更密碼</FontAwesome5.Button>
               </View>
             </> :
-            <Text style={[styles.text, { color: theme.colors.text }]}>需要登入才能查看!</Text>
+            <Text style={[styles.text, { color: theme.colors.notification }]}>需要登入才能查看!</Text>
           }
         </View>
       </ScrollView>
@@ -78,17 +78,17 @@ const ProfileScreen = () => {
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps='handled'>
         <View style={styles.innerContainer}>
           <Input label={'名稱 :'} value={name} setText={setName} secureTextEntry={false} />
-          <Text style={[styles.text, { color: theme.colors.text }]}>生日:</Text>
+          <Text style={[styles.text, { color: theme.colors.primary }]}>生日:</Text>
           <View style={[styles.horizontalGroup, profileStyles.profileItem]}>
             <Feather.Button name='calendar' size={styles.buttonIconSize} onPress={() => setShowBirthdayPicker(true)}>選擇</Feather.Button>
             <Text style={[styles.text, { color: theme.colors.text }]}>{dateToLocalString(birthday)}</Text>
             {showBirthdayPicker && <DateTimePicker value={birthday} onChange={pickBirthday} maximumDate={now} />}
           </View>
-          <Text style={[styles.text, { color: theme.colors.text }]}>性別:</Text>
+          <Text style={[styles.text, { color: theme.colors.primary }]}>性別:</Text>
           <View style={[styles.horizontalGroup, profileStyles.profileItem]}>
-            {Object.entries(GENDERS).map(([label, name]) =>
-              <TouchableOpacity key={label} style={[styles.horizontalGroup, profileStyles.profileItem]} onPress={() => setGender(label)}>
-                <Text style={[styles.text, { color: theme.colors.text }]}>{name}</Text>
+            {Object.entries(GENDERS).map(([label, value]) =>
+              <TouchableOpacity key={label} style={[styles.horizontalGroup, profileStyles.profileItem]} onPress={() => setGender(label)} activeOpacity={0.5}>
+                <Text style={[styles.text, { color: theme.colors.text }]}>{value}</Text>
                 <View style={[profileStyles.radioButton, { borderColor: theme.colors.text }]}>
                   {label == gender && <View style={[profileStyles.radioButtonSelected, { backgroundColor: theme.colors.text }]} />}
                 </View>
@@ -179,7 +179,8 @@ const profileStyles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   profileItem: {
-    alignItems: 'center'
+    alignItems: 'center',
+    marginVertical: 30
   },
   radioButton: {
     height: 24,
