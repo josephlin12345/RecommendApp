@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import { useContext, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Image, Linking, Modal, ScrollView, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Alert, FlatList, Image, Keyboard, Linking, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableWithoutFeedback, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Input from '../components/Input';
@@ -103,48 +103,96 @@ const HomeScreen = () => {
 		);
 
 		const openModal = event => {
-			request('history', 'post', { ...user, title: event.content.title });
+			// request('history', 'post', { ...user, title: event.content.title });
 			setModalVisible(true);
 			setSelectedEvent(event);
 		}
 
-		const loadEvents = async () => {
-			setShowIndicator(true);
-			const response = await request('event', 'get', queryParams);
+		const loadEvents = async params => {
+			const response = await request('event', 'get', params);
 			if(response.error) Alert.alert('取得活動失敗!', response.error);
 			else
 				if(response.result.length) {
 					setEvents(prev => [...prev, ...response.result]);
-					setQueryParams(prev => ({ ...prev, offset: prev.offset + response.result.length }));
+					setQueryParams({ ...params, offset: params.offset + response.result.length });
 				}
-				else setShowIndicator(false);
+				else setCanLoad(false);
+		}
+
+		const resetEvents = async () => {
+			setCanLoad(true);
+			setEvents([]);
+			await loadEvents({ ...queryParams, offset: 0 });
+		}
+
+		const search = () => {
+			Keyboard.dismiss();
+			resetEvents();
+		}
+
+		const refresh = async () => {
+			setRefreshing(true);
+			await resetEvents();
+			setRefreshing(false);
 		}
 
 		const [selectedEvent, setSelectedEvent] = useState(null);
 		const [modalVisible, setModalVisible] =useState(false);
 		const [events, setEvents] = useState([]);
-		const [showIndicator, setShowIndicator] = useState(true);
-		const [queryParams, setQueryParams] = useState({ limit: 10, offset: 0 });
+		const [canLoad, setCanLoad] = useState(true);
+		const [refreshing, setRefreshing] = useState(false);
+		const [queryParams, setQueryParams] = useState({ limit: 10, offset: 0, q: '' });
 		const translatedEvent = selectedEvent && {
 			名稱: selectedEvent.content.title,
 			建立者: selectedEvent.content.organizer,
 			詳情: selectedEvent.content.detail
 		};
-		useEffect(async () => await loadEvents(), []);
+		useEffect(() => loadEvents(queryParams), []);
 
 		return (
 			<>
+				<View style={[styles.horizontalGroup, homeStyles.searchBar]}>
+					<Ionicons.Button
+						name='search'
+						size={styles.buttonIconSize}
+						borderRadius={50}
+						iconStyle={homeStyles.searchIcon}
+						onPress={search}
+					/>
+					<TextInput
+						style={[
+							homeStyles.searchTextInput,
+							homeStyles.block,
+							{
+								color: theme.colors.text,
+								backgroundColor: theme.colors.card,
+								borderColor: theme.colors.border,
+								shadowColor: theme.colors.text
+							}
+						]}
+						autoCapitalize={'none'}
+						placeholder={'搜尋'}
+						placeholderTextColor={theme.colors.text}
+						onChangeText={text => setQueryParams(prev => ({ ...prev, q: text }))}
+						onSubmitEditing={search}
+					/>
+				</View>
 				<FlatList
 					data={events}
 					renderItem={Event}
 					keyExtractor={event => event._id}
 					numColumns={2}
+					onRefresh={refresh}
+					refreshing={refreshing}
 					onEndReachedThreshold={0}
-					onEndReached={loadEvents}
-					ListFooterComponent={showIndicator && <ActivityIndicator size={'large'} color={theme.colors.primary}/>}
+					onEndReached={() => { if(canLoad) loadEvents(queryParams); }}
+					ListFooterComponent={canLoad && !refreshing && <ActivityIndicator size={'large'} color={theme.colors.primary}/>}
 				/>
 				{selectedEvent &&
 					<Modal animationType='fade' transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+						<TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+							<View style={homeStyles.modalOverlay} />
+						</TouchableWithoutFeedback>
 						<View style={homeStyles.modalContainer}>
 							<View style={[homeStyles.modal, homeStyles.block, { borderColor: theme.colors.border, shadowColor: theme.colors.text }]}>
 								<ScrollView contentContainerStyle={homeStyles.modalScrollView} keyboardShouldPersistTaps='handled'>
@@ -222,6 +270,28 @@ const homeStyles = StyleSheet.create({
 		borderWidth: 2,
     borderRadius: 20,
     padding: 10
+	},
+	modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)'
+  },
+	searchBar: {
+		width: '90%',
+		alignSelf: 'center',
+		alignItems: 'center',
+		marginVertical: 10
+	},
+	searchTextInput: {
+		flex: 1,
+		marginRight: 10,
+		fontSize: 15
+	},
+	searchIcon: {
+		marginRight: 0
 	}
 });
 
