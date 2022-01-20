@@ -123,21 +123,11 @@ const HomeScreen = () => {
 				else setCanLoad(false);
 		}
 
-		const resetEvents = async () => {
+		const resetEvents = async params => {
+			Keyboard.dismiss();
 			setCanLoad(true);
 			setEvents([]);
-			await loadEvents({ ...queryParams, offset: 0 });
-		}
-
-		const search = () => {
-			Keyboard.dismiss();
-			resetEvents();
-		}
-
-		const refresh = async () => {
-			setRefreshing(true);
-			await resetEvents();
-			setRefreshing(false);
+			await loadEvents({ ...params, offset: 0 });
 		}
 
 		const [selectedEvent, setSelectedEvent] = useState(null);
@@ -145,7 +135,8 @@ const HomeScreen = () => {
 		const [events, setEvents] = useState([]);
 		const [canLoad, setCanLoad] = useState(true);
 		const [refreshing, setRefreshing] = useState(false);
-		const [queryParams, setQueryParams] = useState({ limit: 10, offset: 0, q: '' });
+		const [queryParams, setQueryParams] = useState({ limit: 10, offset: 0, order: -1, q: '' });
+		const [queryString, setQueryString] = useState('');
 		const translatedEvent = selectedEvent && {
 			名稱: selectedEvent.content.title,
 			建立者: selectedEvent.content.organizer,
@@ -170,7 +161,7 @@ const HomeScreen = () => {
 						size={styles.buttonIconSize}
 						borderRadius={50}
 						iconStyle={homeStyles.searchIcon}
-						onPress={search}
+						onPress={() => resetEvents({ ...queryParams, q: queryString })}
 					/>
 					<TextInput
 						style={[
@@ -186,8 +177,15 @@ const HomeScreen = () => {
 						autoCapitalize={'none'}
 						placeholder={'搜尋'}
 						placeholderTextColor={theme.colors.text}
-						onChangeText={text => setQueryParams(prev => ({ ...prev, q: text }))}
-						onSubmitEditing={search}
+						onChangeText={text => setQueryString(text)}
+						onSubmitEditing={() => resetEvents({ ...queryParams, q: queryString })}
+					/>
+					<Ionicons.Button
+						name={queryParams.order == -1 ? 'arrow-up-circle' : 'arrow-down-circle'}
+						size={styles.buttonIconSize}
+						borderRadius={50}
+						iconStyle={homeStyles.searchIcon}
+						onPress={() => resetEvents({ ...queryParams, order: queryParams.order == -1 ? 1 : -1 })}
 					/>
 				</View>
 				<FlatList
@@ -195,7 +193,11 @@ const HomeScreen = () => {
 					renderItem={Event}
 					keyExtractor={event => event._id}
 					numColumns={2}
-					onRefresh={refresh}
+					onRefresh={async () => {
+						setRefreshing(true);
+						await resetEvents(queryParams);
+						setRefreshing(false);
+					}}
 					refreshing={refreshing}
 					onEndReachedThreshold={0}
 					onEndReached={() => { if(canLoad) loadEvents(queryParams); }}
@@ -303,7 +305,7 @@ const homeStyles = StyleSheet.create({
 	},
 	searchTextInput: {
 		flex: 1,
-		marginRight: 10,
+		marginHorizontal: 10,
 		fontSize: 15
 	},
 	searchIcon: {
