@@ -137,21 +137,20 @@ const HomeScreen = () => {
 		const [refreshing, setRefreshing] = useState(false);
 		const [queryParams, setQueryParams] = useState({ limit: 10, offset: 0, order: -1, q: '' });
 		const [queryString, setQueryString] = useState('');
+		const lastNotificationResponse = Notifications.useLastNotificationResponse();
 		const translatedEvent = selectedEvent && {
 			名稱: selectedEvent.content.title,
 			建立者: selectedEvent.content.organizer,
 			詳情: selectedEvent.content.detail
 		};
-		useEffect(async () => {
-			loadEvents(queryParams);
-			const subscription = Notifications.addNotificationResponseReceivedListener(
-				({ notification: { request: { content: { data: { event } } } } }) => {
-					openModal(event);
-        	Linking.openURL(event.content.url);
-				}
-			);
-			return () => subscription.remove();
-		}, []);
+		useEffect(() => loadEvents(queryParams), []);
+		useEffect(() => {
+			if(lastNotificationResponse) {
+				const event = lastNotificationResponse.notification.request.content.data.event;
+				openModal(event);
+				Linking.openURL(event.content.url);
+			}
+		}, [lastNotificationResponse]);
 
 		return (
 			<>
