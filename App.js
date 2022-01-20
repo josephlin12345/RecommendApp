@@ -1,11 +1,13 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
 import React, { useEffect } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getLocalUser, Provider } from './components/Provider';
 import { BACKGROUND_FETCH_TASK_NAME, LOCATION_UPDATE_TASK_NAME } from './constant';
-import { sendLocation } from './functions/location';
+import { sendLocation, startLocationUpdate } from './functions/location';
 import { startScheduleNotification, updateNotification } from './functions/notification';
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -26,7 +28,12 @@ const App = () => {
   const Tab = createBottomTabNavigator();
   useEffect(async () => {
     const user = await getLocalUser();
-    if(user) startScheduleNotification(user);
+    if(user) {
+      if((await Notifications.getAllScheduledNotificationsAsync()).length)
+        startScheduleNotification(user);
+      if(await Location.hasStartedLocationUpdatesAsync(LOCATION_UPDATE_TASK_NAME))
+        startLocationUpdate();
+    }
   }, []);
 
   return (
