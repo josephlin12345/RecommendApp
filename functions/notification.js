@@ -27,16 +27,15 @@ export const updateNotification = async user => {
     offset: 0,
     limit: NOTIFICATIONS_PER_DAY * 7
   });
-  if(!response.error) {
+  if(response.result) {
     await Notifications.cancelAllScheduledNotificationsAsync();
     for(const item of response.result) {
       const index = response.result.indexOf(item);
-      const content = item.event.content;
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: content.organizer,
-          body: content.title,
-          data: { url: content.url }
+          title: item.event.content.organizer,
+          body: item.event.content.title,
+          data: { event: item.event }
         },
         trigger: {
           weekday: index % 7 + 1,

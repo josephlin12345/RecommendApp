@@ -1,5 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import { useContext, useEffect, useRef, useState } from 'react';
+import * as Notifications from 'expo-notifications';
+import { useContext, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Image, Keyboard, Linking, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableWithoutFeedback, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -103,14 +104,17 @@ const HomeScreen = () => {
 		);
 
 		const openModal = event => {
-			// request('history', 'post', { ...user, title: event.content.title });
-			setModalVisible(true);
+			request('history', 'post', { ...user, title: event.content.title });
 			setSelectedEvent(event);
+			setModalVisible(true);
 		}
 
 		const loadEvents = async params => {
 			const response = await request('event', 'get', params);
-			if(response.error) Alert.alert('取得活動失敗!', response.error);
+			if(response.error) {
+				setCanLoad(false);
+				Alert.alert('取得活動失敗!', response.error);
+			}
 			else
 				if(response.result.length) {
 					setEvents(prev => [...prev, ...response.result]);
@@ -147,7 +151,16 @@ const HomeScreen = () => {
 			建立者: selectedEvent.content.organizer,
 			詳情: selectedEvent.content.detail
 		};
-		useEffect(() => loadEvents(queryParams), []);
+		useEffect(async () => {
+			loadEvents(queryParams);
+			const subscription = Notifications.addNotificationResponseReceivedListener(
+				({ notification: { request: { content: { data: { event } } } } }) => {
+					openModal(event);
+        	Linking.openURL(event.content.url);
+				}
+			);
+			return () => subscription.remove();
+		}, []);
 
 		return (
 			<>
@@ -204,7 +217,7 @@ const HomeScreen = () => {
 										</View>
 									)}
 								</ScrollView>
-								<View style={styles.horizontalGroup}>
+								<View style={[styles.horizontalGroup, homeStyles.modalButtonGroup]}>
 									<Ionicons.Button name='close-circle' size={styles.buttonIconSize} onPress={() => setModalVisible(false)}>關閉</Ionicons.Button>
 									<Ionicons.Button name='arrow-forward-circle' size={styles.buttonIconSize} onPress={() => Linking.openURL(selectedEvent.content.url)}>前往</Ionicons.Button>
 								</View>
@@ -258,6 +271,9 @@ const homeStyles = StyleSheet.create({
 	modalLabel: {
 		fontSize: 20,
 		paddingVertical: 5
+	},
+	modalButtonGroup: {
+		paddingTop: 10
 	},
 	block: {
     shadowOffset: {
