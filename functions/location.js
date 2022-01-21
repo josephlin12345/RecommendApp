@@ -19,8 +19,14 @@ export const startLocationUpdate = async () => {
 export const sendLocation = async (location, user) => {
 	try {
 		const [address] = await Location.reverseGeocodeAsync(location.coords);
-		if(isNaN(address.name)) request('history', 'post', { ...user, title: address.name });
-	} catch(e) { console.log(e); }
+		if(isNaN(address.name)) {
+			setTimeout(async () => {
+				const currentLocation = await Location.getCurrentPositionAsync();
+				const [currentAddress] = await Location.reverseGeocodeAsync(currentLocation.coords);
+				if(address.name == currentAddress.name) request('history', 'post', { ...user, title: address.name });
+			}, 10 * 60 * 1000);
+		}
+	} catch {}
 }
 
 export const stopLocationUpdate = async () => {

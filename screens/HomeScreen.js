@@ -198,7 +198,7 @@ const HomeScreen = () => {
 						setRefreshing(false);
 					}}
 					refreshing={refreshing}
-					onEndReachedThreshold={0}
+					onEndReachedThreshold={0.5}
 					onEndReached={() => { if(canLoad) loadEvents(queryParams); }}
 					ListFooterComponent={canLoad && !refreshing && <ActivityIndicator size={'large'} color={theme.colors.primary}/>}
 				/>
