@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'https://recommend--api.herokuapp.com/api/';
+export const API_BASE_URL = '';
 export const LOCATION_UPDATE_TASK_NAME = 'LocationUpdate';
 export const BACKGROUND_FETCH_TASK_NAME = 'BackgroundFetch';
 export const NOTIFICATIONS_PER_DAY = 6;
