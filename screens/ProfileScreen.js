@@ -17,7 +17,7 @@ const ProfileScreen = () => {
       信箱: profile.email,
       名稱: profile.name,
       姓別: profile.gender ? GENDERS[profile.gender] : '無',
-      生日: dateToLocalString(parseDatetimeString(profile.birthday))
+      生日: profile.birthday ? dateToLocalString(parseDatetimeString(profile.birthday)) : '無'
     };
 
     return (
